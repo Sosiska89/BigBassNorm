@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f0a1c562a4f234a5c80db8830befc067
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 229334
+  packageName: UniWebView 5
+  packageVersion: 5.9.2
+  assetPath: Assets/Plugins/UniWebView.bundle/Contents/_CodeSignature/CodeResources
+  uploadId: 656389

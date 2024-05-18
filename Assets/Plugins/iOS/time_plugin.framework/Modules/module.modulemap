@@ -1,0 +1,6 @@
+framework module time_plugin {
+  umbrella header "time_plugin.h"
+  export *
+
+  module * { export * }
+}
