@@ -9,8 +9,9 @@ public class CompRoot : MonoBehaviour
 {
     [SerializeField] private Image _fadeImg;
     
-    [HideInInspector] public int Coins;
     [HideInInspector] public bool IsSound;
+    [HideInInspector] public int BestScoreFish;
+    [HideInInspector] public int BestScoreMemory;
 
     [HideInInspector] public static CompRoot Instanse;
     private float _fadeTime = 0.5f;
@@ -24,9 +25,9 @@ public class CompRoot : MonoBehaviour
         {
             Instanse = this;
             DontDestroyOnLoad(gameObject);
-            Coins = PlayerPrefs.GetInt("Coins", 500);
             IsSound = Convert.ToBoolean(PlayerPrefs.GetInt("IsSound", 1));
-
+            BestScoreFish = PlayerPrefs.GetInt("BestScoreFish", 0);
+            BestScoreMemory = PlayerPrefs.GetInt("BestScoreMemory", -1);
         }
         else 
         {
@@ -72,22 +73,25 @@ public class CompRoot : MonoBehaviour
 
     private void OnApplicationFocus(bool focus)
     {
-        PlayerPrefs.SetInt("Coins", Coins);
         PlayerPrefs.SetInt("IsSound", Convert.ToInt32(IsSound));
+        PlayerPrefs.SetInt("BestScoreFish", BestScoreFish);
+        PlayerPrefs.SetInt("BestScoreMemory", BestScoreMemory);
         PlayerPrefs.Save();
     }
 
     private void OnApplicationQuit()
     {
-        PlayerPrefs.SetInt("Coins", Coins);
         PlayerPrefs.SetInt("IsSound", Convert.ToInt32(IsSound));
+        PlayerPrefs.SetInt("BestScoreFish", BestScoreFish);
+        PlayerPrefs.SetInt("BestScoreMemory", BestScoreMemory);
         PlayerPrefs.Save();
     }
 
     private void OnApplicationPause(bool pause)
     {
-        PlayerPrefs.SetInt("Coins", Coins);
         PlayerPrefs.SetInt("IsSound", Convert.ToInt32(IsSound));
+        PlayerPrefs.SetInt("BestScoreFish", BestScoreFish);
+        PlayerPrefs.SetInt("BestScoreMemory", BestScoreMemory);
         PlayerPrefs.Save();
     }
 }

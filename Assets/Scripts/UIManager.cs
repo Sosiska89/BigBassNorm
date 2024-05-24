@@ -16,21 +16,26 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Fisherman _fisherman;
 
-    [SerializeField] private GameObject _noCoinsGO;
-    [SerializeField] private RectTransform _noCoinsRT;
-    [SerializeField] private Image _fadeNoCoins;
     [SerializeField] private Color _fadeColor;
 
     [SerializeField] private GameObject _pauseGO;
     [SerializeField] private RectTransform _pauseRT;
     [SerializeField] private Image _fadePause;
 
-    public bool IsOpenUI = false;
+    [HideInInspector] public bool IsOpenUI = false;
+    [SerializeField] public TextMeshProUGUI _bestScoreText;
+    [SerializeField] public TextMeshProUGUI _scoreText;
 
     public void OnClickMenu() 
     {
         Time.timeScale = 1;
         CompRoot.Instanse.FadeToScene("Menu");
+    }
+
+    private void Update()
+    {
+        _bestScoreText.text = CompRoot.Instanse.BestScoreFish.ToString();
+        _scoreText.text = _fisherman.Fishs.ToString();
     }
 
     public void OnClickPause() 
@@ -44,7 +49,6 @@ public class UIManager : MonoBehaviour
 
     public void OnClickResume() 
     {
-
         Time.timeScale = 1;
         _pauseRT.DOAnchorPosY(-1500, 0.5f).SetUpdate(true);
         _fadePause.DOColor(Color.clear, 0.5f).OnComplete(() => 
@@ -57,7 +61,6 @@ public class UIManager : MonoBehaviour
 
     private void InitializeInventory() 
     {
-
         for (int i = 0; i < _selectText.Length; i++)
         {
             if (_fisherman.IndexBait == i)
@@ -92,24 +95,23 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OnShowNoCoinsPopUp() 
+    [SerializeField] private GameObject _gameOverGO;
+    [SerializeField] private RectTransform _gameOverRT;
+    [SerializeField] private Image _gameOverFade;
+
+    public void OnShowGameOverPopUp() 
     {
+        Time.timeScale = 0;
         IsOpenUI = true;
-        _noCoinsGO.SetActive(true);
-        _noCoinsRT.DOAnchorPosY(0, 0.5f);
-        _fadeNoCoins.DOColor(_fadeColor, 0.5f);
+        _gameOverGO.SetActive(true);
+        _gameOverRT.DOAnchorPosY(0, 0.5f).SetUpdate(true);
+        _gameOverFade.DOColor(_fadeColor, 0.5f).SetUpdate(true);
     }
 
-    public void OnHideNoCoinsPopUp()
+    public void OnClickRestart() 
     {
-
-        _noCoinsRT.DOAnchorPosY(-1500, 0.5f);
-        _fadeNoCoins.DOColor(Color.clear, 0.5f).OnComplete(() => 
-        {
-            _noCoinsGO.SetActive(false);
-            _noCoinsRT.anchoredPosition = new Vector2(_noCoinsRT.anchoredPosition.x, 1500);
-            IsOpenUI = false;
-        });
+        Time.timeScale = 1;
+        CompRoot.Instanse.FadeToScene("MainGamePlay");
     }
 
     public void OnClickInventory() 

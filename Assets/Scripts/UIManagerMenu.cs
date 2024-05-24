@@ -10,13 +10,58 @@ using UnityEngine.UI;
 
 public class UIManagerMenu : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _coinsText;
-    [SerializeField] private Button _plusCoins;
     [SerializeField] private GameObject _onMusic;
     [SerializeField] private GameObject _offMusic;
+    [SerializeField] private GameObject _musicBtn;
 
     [SerializeField] private RectTransform _menuRT;
     [SerializeField] private TextMeshProUGUI _loadingText;
+
+    [SerializeField] private TextMeshProUGUI _bestFishScore;
+    [SerializeField] private TextMeshProUGUI _bestMemoryScore;
+    [SerializeField] private GameObject _recordsGO;
+    [SerializeField] private RectTransform _recordRT;
+    [SerializeField] private Image _recordsFade;
+    [SerializeField] private Color _fadeColor;
+
+    public void OnClickRecords() 
+    {
+        _bestFishScore.text = CompRoot.Instanse.BestScoreFish.ToString();
+
+        if (CompRoot.Instanse.BestScoreMemory == -1)
+        {
+            _bestMemoryScore.text = "00:00";
+        }
+        else 
+        {
+            TimeSpan timeSpanPanel = TimeSpan.FromSeconds(CompRoot.Instanse.BestScoreMemory);
+            _bestMemoryScore.text = timeSpanPanel.ToString(@"mm\:ss");
+        }
+
+        _musicBtn.SetActive(false);
+        _recordsGO.SetActive(true);
+        _recordsFade.DOColor(_fadeColor, 0.5f);
+        _recordRT.DOAnchorPosY(0, 0.5f);
+
+        _menuRT.DOAnchorPosY(-2300f, 0.5f).OnComplete(() => 
+        {
+            _menuRT.anchoredPosition = new Vector2(_menuRT.anchoredPosition.x, 2300f);
+        });
+    }
+
+    public void OnClickCloseRecords() 
+    {
+        _menuRT.DOAnchorPosY(-32f, 0.5f).OnComplete(() => 
+        {
+            _musicBtn.SetActive(true);
+        });
+        _recordsFade.DOColor(Color.clear, 0.5f);
+        _recordRT.DOAnchorPosY(-2300, 0.5f).OnComplete(delegate
+        {
+            _recordRT.anchoredPosition = new Vector2(_recordRT.anchoredPosition.x, 2300);
+            _recordsGO.SetActive(false);
+        });
+    }
 
     public void OnClickMusic() 
     {
@@ -38,11 +83,6 @@ public class UIManagerMenu : MonoBehaviour
     {
         Application.targetFrameRate = 100;
 
-        if (CompRoot.Instanse.Coins <= 50)
-        {
-            _plusCoins.gameObject.SetActive(true);
-        }
-
         if (CompRoot.Instanse.IsSound)
         {
             _onMusic.SetActive(true);
@@ -60,7 +100,7 @@ public class UIManagerMenu : MonoBehaviour
         }
         else 
         {
-            _menuRT.anchoredPosition = new Vector2(_menuRT.anchoredPosition.x, 0);
+            _menuRT.anchoredPosition = new Vector2(_menuRT.anchoredPosition.x, -32f);
             _loadingText.gameObject.SetActive(false);
         }
     }
@@ -250,7 +290,7 @@ public class UIManagerMenu : MonoBehaviour
     {
         CompRoot.Instanse.IsFirstOpenMenu = false;
 
-        _menuRT.DOAnchorPosY(0, 0.5f);
+        _menuRT.DOAnchorPosY(-32, 0.5f);
         _loadingText.rectTransform.DOAnchorPosY(-1600, 0.5f).OnComplete(() =>
         {
             _loadingText.gameObject.SetActive(false);
@@ -259,20 +299,14 @@ public class UIManagerMenu : MonoBehaviour
         AudioSyst.Instanse.SetMusic(CompRoot.Instanse.IsSound);
     }
 
-    public void OnClickAddCoins() 
-    {
-        CompRoot.Instanse.Coins += 500;
-        _plusCoins.gameObject.SetActive(false);
-    }
-
-    private void Update()
-    {
-        _coinsText.text = CompRoot.Instanse.Coins.ToString();   
-    }
-
     public void OnClickPlay() 
     {
         CompRoot.Instanse.FadeToScene("MainGamePlay");
+    }
+
+    public void OnClickMemory() 
+    {
+        CompRoot.Instanse.FadeToScene("MemoryGame");
     }
 
     public void OnClickRateUp(string url) 

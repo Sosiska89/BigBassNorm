@@ -16,6 +16,7 @@ public class Fisherman : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _coinsText;
     [SerializeField] private BaitManager _baitManager;
     [SerializeField] private UIManager _uiManager;
+    [SerializeField] private TextMeshProUGUI _fishText;
 
     private bool _isHook = false;
     private Vector2 _clickPosHook = Vector2.zero;
@@ -23,6 +24,8 @@ public class Fisherman : MonoBehaviour
     private bool _isTargetPath = true;
     private Fish _fish;
     private Symbol _symbol;
+    private int _coins = 100;
+    [HideInInspector] public int Fishs = 0;
 
     public int IndexBait { get; set; } = 0;
 
@@ -98,25 +101,62 @@ public class Fisherman : MonoBehaviour
         _colorTween = _coinsAnimText.DOColor(Color.clear, 2f);
     }
 
+    private void OnDestroy()
+    {
+        if (Fishs > CompRoot.Instanse.BestScoreFish)
+        {
+            CompRoot.Instanse.BestScoreFish = Fishs;
+        }
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if (Fishs > CompRoot.Instanse.BestScoreFish)
+        {
+            CompRoot.Instanse.BestScoreFish = Fishs;
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (Fishs > CompRoot.Instanse.BestScoreFish)
+        {
+            CompRoot.Instanse.BestScoreFish = Fishs;
+        }
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (Fishs > CompRoot.Instanse.BestScoreFish)
+        {
+            CompRoot.Instanse.BestScoreFish = Fishs;
+        }
+    }
+
     private void Update()
     {
-        _coinsText.text = CompRoot.Instanse.Coins.ToString();
+        _coinsText.text = _coins.ToString();
+        _fishText.text = Fishs.ToString();
 
         if (Input.GetMouseButtonDown(0) && !_isHook && !_uiManager.IsOpenUI)
         {
             Vector2 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (clickPos.y <= 1.7f)
             {
-                if (CompRoot.Instanse.Coins - _baitManager.GetPrice(IndexBait) >= 0)
+                if (_coins - _baitManager.GetPrice(IndexBait) >= 0)
                 {
                     CoinsAnimation(true, _baitManager.GetPrice(IndexBait));
-                    CompRoot.Instanse.Coins -= _baitManager.GetPrice(IndexBait);
+                    _coins -= _baitManager.GetPrice(IndexBait);
                     _isHook = true;
                     _clickPosHook = clickPos;
                 }
                 else 
                 {
-                    _uiManager.OnShowNoCoinsPopUp();
+                    _uiManager.OnShowGameOverPopUp();
+                    if (Fishs > CompRoot.Instanse.BestScoreFish) 
+                    {
+                        CompRoot.Instanse.BestScoreFish = Fishs;
+                    }
                 }
             }
         }
@@ -144,7 +184,8 @@ public class Fisherman : MonoBehaviour
 
                     if (_fish != null)
                     {
-                        CompRoot.Instanse.Coins += _baitManager.GetReward(IndexBait, _fish.gameObject);
+                        Fishs++;
+                        _coins += _baitManager.GetReward(IndexBait, _fish.gameObject);
                         CoinsAnimation(false, _baitManager.GetReward(IndexBait, _fish.gameObject));
                         Destroy(_fish.gameObject);
                         _fish = null;
@@ -152,7 +193,8 @@ public class Fisherman : MonoBehaviour
 
                     if (_symbol != null)
                     {
-                        CompRoot.Instanse.Coins += _baitManager.GetReward(IndexBait, _symbol.gameObject);
+                        Fishs++;
+                        _coins += _baitManager.GetReward(IndexBait, _symbol.gameObject);
                         CoinsAnimation(false, _baitManager.GetReward(IndexBait, _symbol.gameObject));
                         Destroy(_symbol.gameObject);
                         _symbol = null;
